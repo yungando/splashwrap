@@ -6,6 +6,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.SplashTextRenderer;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.StringVisitable;
+import net.minecraft.util.math.ColorHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -28,14 +29,14 @@ public class SplashTextRendererMixin {
   }
 
   @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawCenteredTextWithShadow(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"))
-  private void wrapSplashText(DrawContext context, int screenWidth, TextRenderer textRenderer, int alpha, CallbackInfo ci) {
+  private void wrapSplashText(DrawContext context, int screenWidth, TextRenderer textRenderer, float alpha, CallbackInfo ci) {
     StringVisitable splashText = StringVisitable.plain(this.text);
     List<OrderedText> splashTextLines = textRenderer.wrapLines(splashText, SplashWrap.config.maximumLineWidth());
 
     int y = -8;
 
     for (OrderedText splashLine : splashTextLines) {
-      context.drawCenteredTextWithShadow(textRenderer, splashLine, 0, y, 0xffff00 | alpha);
+      context.drawCenteredTextWithShadow(textRenderer, splashLine, 0, y, ColorHelper.withAlpha(alpha, -256));
       y += 9;
     }
   }
