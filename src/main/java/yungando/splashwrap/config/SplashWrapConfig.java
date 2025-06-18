@@ -6,13 +6,8 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.Tooltip;
 import yungando.splashwrap.SplashWrap;
 
 public class SplashWrapConfig {
-  public int maximumLineWidth() {
-    return 200;
-  }
-
-  public int minimumTextScale() {
-    return 150;
-  }
+  public int maximumLineWidth() { return 200; }
+  public int minimumTextScale() { return 150; }
 
   @SuppressWarnings("FieldMayBeFinal")
   @Config(name = SplashWrap.MODID)
@@ -23,13 +18,8 @@ public class SplashWrapConfig {
     private int minimumTextScale = super.minimumTextScale();
 
     @Override
-    public int maximumLineWidth() {
-      return maximumLineWidth;
-    }
-
+    public int maximumLineWidth() { return maximumLineWidth; }
     @Override
-    public int minimumTextScale() {
-      return minimumTextScale;
-    }
+    public int minimumTextScale() { return minimumTextScale; }
   }
 }
