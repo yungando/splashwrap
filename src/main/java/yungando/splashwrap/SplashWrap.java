@@ -21,7 +21,7 @@ public class SplashWrap implements ClientModInitializer {
       AutoConfig.register(SplashWrapAutoConfig.class, GsonConfigSerializer::new);
       config = AutoConfig.getConfigHolder(SplashWrapAutoConfig.class).getConfig();
     } else {
-      config = new SplashWrapAutoConfig();
+      config = new SplashWrapConfig();
     }
   }
 }
