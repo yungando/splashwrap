@@ -13,7 +13,6 @@ import yungando.splashwrap.config.SplashWrapConfig.SplashWrapAutoConfig;
 public class SplashWrap implements ClientModInitializer {
   public static final String MODID = "splashwrap";
   public static final boolean USE_AUTO_CONFIG = FabricLoader.getInstance().isModLoaded("cloth-config2");
-
   public static SplashWrapConfig config;
 
   @Override
@@ -22,7 +21,7 @@ public class SplashWrap implements ClientModInitializer {
       AutoConfig.register(SplashWrapAutoConfig.class, GsonConfigSerializer::new);
       config = AutoConfig.getConfigHolder(SplashWrapAutoConfig.class).getConfig();
     } else {
-      config = new SplashWrapAutoConfig();
+      config = new SplashWrapConfig();
     }
   }
 }
