@@ -1,12 +1,15 @@
 package yungando.splashwrap.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.SplashTextRenderer;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.StringVisitable;
-import net.minecraft.util.math.ColorHelper;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.client.gui.ActiveTextCollector;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.TextAlignment;
+import net.minecraft.client.gui.components.SplashRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.util.FormattedCharSequence;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,31 +21,31 @@ import yungando.splashwrap.SplashWrap;
 
 import java.util.List;
 
-@Mixin(SplashTextRenderer.class)
+@Mixin(SplashRenderer.class)
 public class SplashTextRendererMixin {
   @Shadow @Final
-  private String text;
+  private Component splash;
 
-  @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;getWidth(Ljava/lang/String;)I"))
-  private int scaleSplashText(TextRenderer textRenderer, String text) {
-    return Math.min(textRenderer.getWidth(this.text), SplashWrap.config.minimumTextScale());
+  @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;width(Lnet/minecraft/network/chat/FormattedText;)I"))
+  private int scaleSplashText(Font instance, FormattedText formattedText) {
+    return Math.min(instance.width(this.splash), SplashWrap.config.minimumTextScale());
   }
 
-  @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawCenteredTextWithShadow(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"))
-  private void wrapSplashText(DrawContext context, int screenWidth, TextRenderer textRenderer, float alpha, CallbackInfo ci) {
-    StringVisitable splashText = StringVisitable.plain(this.text);
-    List<OrderedText> splashTextLines = textRenderer.wrapLines(splashText, SplashWrap.config.maximumLineWidth());
+  @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ActiveTextCollector;accept(Lnet/minecraft/client/gui/TextAlignment;IILnet/minecraft/client/gui/ActiveTextCollector$Parameters;Lnet/minecraft/network/chat/Component;)V"))
+  private void wrapSplashText(GuiGraphics guiGraphics, int i, Font font, float f, CallbackInfo ci, @Local(ordinal = 1) int j, @Local ActiveTextCollector.Parameters parameters, @Local ActiveTextCollector activeTextCollector) {
+    FormattedText splashText = this.splash;
+    List<FormattedCharSequence> splashTextLines = font.split(splashText, SplashWrap.config.maximumLineWidth());
 
     int y = -8;
 
-    for (OrderedText splashLine : splashTextLines) {
-      context.drawCenteredTextWithShadow(textRenderer, splashLine, 0, y, ColorHelper.withAlpha(alpha, -256));
+    for (FormattedCharSequence splashLine : splashTextLines) {
+      activeTextCollector.accept(TextAlignment.CENTER, 0, y, parameters, splashLine);
       y += 9;
     }
   }
 
-  @WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawCenteredTextWithShadow(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"))
-  private boolean cancelVanillaDraw(DrawContext instance, TextRenderer textRenderer, String text, int centerX, int y, int color) {
+  @WrapWithCondition(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ActiveTextCollector;accept(Lnet/minecraft/client/gui/TextAlignment;IILnet/minecraft/client/gui/ActiveTextCollector$Parameters;Lnet/minecraft/network/chat/Component;)V"))
+  private boolean cancelVanillaDraw(ActiveTextCollector instance, TextAlignment textAlignment, int i, int j, ActiveTextCollector.Parameters parameters, Component component) {
     return false;
   }
 }
