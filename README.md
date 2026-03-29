@@ -2,6 +2,7 @@
 <h3 align="center">splashwrap</h3>
 
 ## Features
+
 Enables line wrapping for long resource pack splash texts. Configurable maximum line length and minimum text scale.
 
 Compatible with [Give me a new splash text!](https://modrinth.com/mod/give-me-a-new-splash-text).
