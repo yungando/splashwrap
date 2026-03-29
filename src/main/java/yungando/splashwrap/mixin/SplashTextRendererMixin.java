@@ -23,29 +23,29 @@ import java.util.List;
 
 @Mixin(SplashRenderer.class)
 public class SplashTextRendererMixin {
-  @Shadow @Final
-  private Component splash;
+	@Shadow @Final
+	private Component splash;
 
-  @Redirect(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;width(Lnet/minecraft/network/chat/FormattedText;)I"))
-  private int scaleSplashText(Font instance, FormattedText formattedText) {
-    return Math.min(instance.width(this.splash), SplashWrap.config.minimumTextScale());
-  }
+	@Redirect(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Font;width(Lnet/minecraft/network/chat/FormattedText;)I"))
+	private int scaleSplashText(Font instance, FormattedText formattedText) {
+		return Math.min(instance.width(this.splash), SplashWrap.config.minimumTextScale());
+	}
 
-  @Inject(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ActiveTextCollector;accept(Lnet/minecraft/client/gui/TextAlignment;IILnet/minecraft/client/gui/ActiveTextCollector$Parameters;Lnet/minecraft/network/chat/Component;)V"))
-  private void wrapSplashText(GuiGraphicsExtractor guiGraphicsExtractor, int i, Font font, float f, CallbackInfo ci, @Local(name = "renderParameters") ActiveTextCollector.Parameters parameters, @Local(name = "textRenderer") ActiveTextCollector activeTextCollector) {
-    FormattedText splashText = this.splash;
-    List<FormattedCharSequence> splashTextLines = font.split(splashText, SplashWrap.config.maximumLineWidth());
+	@Inject(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ActiveTextCollector;accept(Lnet/minecraft/client/gui/TextAlignment;IILnet/minecraft/client/gui/ActiveTextCollector$Parameters;Lnet/minecraft/network/chat/Component;)V"))
+	private void wrapSplashText(GuiGraphicsExtractor guiGraphicsExtractor, int screenWidth, Font font, float alpha, CallbackInfo ci, @Local(name = "renderParameters") ActiveTextCollector.Parameters parameters, @Local(name = "textRenderer") ActiveTextCollector activeTextCollector) {
+		FormattedText splashText = this.splash;
+		List<FormattedCharSequence> splashTextLines = font.split(splashText, SplashWrap.config.maximumLineWidth());
 
-    int y = -8;
+		int y = -8;
 
-    for (FormattedCharSequence splashLine : splashTextLines) {
-      activeTextCollector.accept(TextAlignment.CENTER, 0, y, parameters, splashLine);
-      y += 9;
-    }
-  }
+		for (FormattedCharSequence splashLine : splashTextLines) {
+			activeTextCollector.accept(TextAlignment.LEFT, -font.width(splashLine) / 2, y, parameters, splashLine);
+			y += 9;
+		}
+	}
 
-  @WrapWithCondition(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ActiveTextCollector;accept(Lnet/minecraft/client/gui/TextAlignment;IILnet/minecraft/client/gui/ActiveTextCollector$Parameters;Lnet/minecraft/network/chat/Component;)V"))
-  private boolean cancelVanillaDraw(ActiveTextCollector instance, TextAlignment textAlignment, int i, int j, ActiveTextCollector.Parameters parameters, Component component) {
-    return false;
-  }
+	@WrapWithCondition(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/ActiveTextCollector;accept(Lnet/minecraft/client/gui/TextAlignment;IILnet/minecraft/client/gui/ActiveTextCollector$Parameters;Lnet/minecraft/network/chat/Component;)V"))
+	private boolean cancelVanillaDraw(ActiveTextCollector instance, TextAlignment textAlignment, int i, int j, ActiveTextCollector.Parameters parameters, Component component) {
+		return false;
+	}
 }

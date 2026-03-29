@@ -1,9 +1,12 @@
 {
   "required": true,
   "package": "yungando.splashwrap.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "injectors": {
     "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
   },
   "client": [
     "SplashTextRendererMixin"
