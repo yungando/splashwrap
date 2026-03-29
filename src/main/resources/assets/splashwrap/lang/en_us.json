@@ -1,0 +1,7 @@
+{
+  "text.autoconfig.splashwrap.title": "splashwrap",
+  "text.autoconfig.splashwrap.option.maximumLineWidth": "Maximum Line Width",
+  "text.autoconfig.splashwrap.option.maximumLineWidth.@Tooltip": "The maximum width splash texts can be before wrapping to a new line.",
+  "text.autoconfig.splashwrap.option.minimumTextScale": "Minimum Text Scale",
+  "text.autoconfig.splashwrap.option.minimumTextScale.@Tooltip": "The minimum width that can be used to generate splash text scale. (Bigger number = smaller splash text)"
+}
